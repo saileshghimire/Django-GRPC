@@ -1,0 +1,32 @@
+services:
+  web:
+    build:
+      context: ./system1
+      dockerfile: Dockerfile
+    container_name: django-user-grpc
+    env_file:
+      - ./system1/.env
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      - PORT=8000
+    volumes:
+      - ./system1:/app
+      
+
+  db:
+    image: postgres:14
+    container_name: postgres-user-db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: grpc
+      POSTGRES_PASSWORD: grpc@123
+      POSTGRES_DB: grpc_user_DB
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres_data:
