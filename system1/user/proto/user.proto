@@ -1,0 +1,71 @@
+syntax = "proto3";
+
+package user;
+
+// The CustomUser message represents a user in the system.
+message User {
+    string id = 1;
+    string email = 2;
+    string password = 3;
+    string first_name = 4;
+    string middle_name = 5;
+    string last_name = 6;
+    bool is_active = 7;
+    bool is_superuser = 8;
+    bool is_staff = 9;
+
+}
+
+
+// The request message for creating a user.
+message CreateUserRequest {
+    string email = 1;
+    string password = 2;
+    string first_name = 3;
+    string middle_name = 4;
+    string last_name = 5;
+
+}
+
+// The response message for creating a user.
+message CreateUserResponse {
+    bool success = 1;
+    string message =2;
+    User user = 3;
+}
+
+// The request message for getting user details by email.
+message GetUserRequest {
+    string email = 1;
+
+}
+
+// The response message for getting user details.
+message GetUserResposne {
+    User user = 1;
+}
+
+// The request message for updating user details.
+message UpdateUserRequest {
+    string id = 1;
+    string email = 2;
+    string first_name = 4;
+    string middle_name = 5;
+    string last_name = 6;
+    bool is_staff = 7;
+    bool is_superuser = 8;
+}
+
+// The response message for updating a user.
+message UpdateUserResponse {
+    bool success = 1;
+    string message = 2;
+    User user = 3;
+}
+
+// The service definition for user-related operations.
+service UserService {
+    rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
+    rpc GetUser(GetUserRequest) returns (GetUserRequest);
+    rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse);
+}

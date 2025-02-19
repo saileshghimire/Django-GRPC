@@ -1,1 +1,2 @@
 Django==5.1.6
+grpcio-tools==1.70.0
