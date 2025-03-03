@@ -29,7 +29,18 @@ class UserService(user_pb2_grpc.UserServiceServicer):
                 is_superuser=False,
                 is_staff=False
             )
-            return user_pb2.CreateUserResponse(success=True, message='User created', user=user)
+            # Convert Django User model to gRPC User message
+            grpc_user = user_pb2.User(
+                id=str(user.id),
+                email=user.email,
+                first_name=user.first_name,
+                middle_name=user.middle_name,
+                last_name=user.last_name,
+                is_staff=user.is_staff,
+                is_superuser=user.is_superuser
+            )
+
+            return user_pb2.CreateUserResponse(success=True, message='User created', user=grpc_user)
         except IntegrityError:
             # return CreateUserResponse(success=False, message='Error creating user')
             context.abort(grpc.StatusCode.ALREADY_EXISTS, 'User already exists')
@@ -37,7 +48,16 @@ class UserService(user_pb2_grpc.UserServiceServicer):
     def GetUser(self, request, context):
         try:
             user = User.objects.get(email=request.email)
-            return user_pb2.GetUserResponse(user=User())
+            grpc_user = user_pb2.User(
+            id=str(user.id),
+            email=user.email,
+            first_name=user.first_name,
+            middle_name=user.middle_name,
+            last_name=user.last_name,
+            is_staff=user.is_staff,
+            is_superuser=user.is_superuser
+        )
+            return user_pb2.GetUserResponse(user=grpc_user)
         except User.DoesNotExist:
             context.abort(grpc.StatusCode.NOT_FOUND, 'User not found')
     
@@ -51,9 +71,36 @@ class UserService(user_pb2_grpc.UserServiceServicer):
             user.is_staff = request.is_staff
             user.is_superuser = request.is_superuser
             user.save()
-            return user_pb2.UpdateUserResponse(success=True, message='User updated', user=user)
+
+            grpc_user = user_pb2.User(
+            id=str(user.id),
+            email=user.email,
+            first_name=user.first_name,
+            middle_name=user.middle_name,
+            last_name=user.last_name,
+            is_staff=user.is_staff,
+            is_superuser=user.is_superuser
+        )
+            return user_pb2.UpdateUserResponse(success=True, message='User updated', user=grpc_user)
         except User.DoesNotExist:
             context.abort(grpc.StatusCode.NOT_FOUND, 'User not found')
+
+
+    def GetAllUser(self, request, context):
+        users = User.objects.all()
+        grpc_users = [
+            user_pb2.User(
+                id=str(user.id),
+                email=user.email,
+                first_name=user.first_name,
+                middle_name=user.middle_name,
+                last_name=user.last_name,
+                is_staff=user.is_staff,
+                is_superuser=user.is_superuser
+            )
+            for user in users
+        ]
+        return user_pb2.GetAllUserResponse(users=grpc_users)
 
 
 

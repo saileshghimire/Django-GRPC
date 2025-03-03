@@ -1,5 +1,6 @@
 asgiref==3.8.1
 Django==5.1.6
+psycopg2-binary==2.9.8
 grpcio==1.70.0
 grpcio-tools==1.70.0
 protobuf==5.29.3

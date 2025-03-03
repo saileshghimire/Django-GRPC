@@ -43,12 +43,17 @@ class UserServiceStub(object):
         self.GetUser = channel.unary_unary(
                 '/user.UserService/GetUser',
                 request_serializer=user__pb2.GetUserRequest.SerializeToString,
-                response_deserializer=user__pb2.GetUserRequest.FromString,
+                response_deserializer=user__pb2.GetUserResposne.FromString,
                 _registered_method=True)
         self.UpdateUser = channel.unary_unary(
                 '/user.UserService/UpdateUser',
                 request_serializer=user__pb2.UpdateUserRequest.SerializeToString,
                 response_deserializer=user__pb2.UpdateUserResponse.FromString,
+                _registered_method=True)
+        self.GetAllUser = channel.unary_unary(
+                '/user.UserService/GetAllUser',
+                request_serializer=user__pb2.GetAllUserRequest.SerializeToString,
+                response_deserializer=user__pb2.GetAllUserResponse.FromString,
                 _registered_method=True)
 
 
@@ -74,6 +79,12 @@ class UserServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetAllUser(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_UserServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -85,12 +96,17 @@ def add_UserServiceServicer_to_server(servicer, server):
             'GetUser': grpc.unary_unary_rpc_method_handler(
                     servicer.GetUser,
                     request_deserializer=user__pb2.GetUserRequest.FromString,
-                    response_serializer=user__pb2.GetUserRequest.SerializeToString,
+                    response_serializer=user__pb2.GetUserResposne.SerializeToString,
             ),
             'UpdateUser': grpc.unary_unary_rpc_method_handler(
                     servicer.UpdateUser,
                     request_deserializer=user__pb2.UpdateUserRequest.FromString,
                     response_serializer=user__pb2.UpdateUserResponse.SerializeToString,
+            ),
+            'GetAllUser': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetAllUser,
+                    request_deserializer=user__pb2.GetAllUserRequest.FromString,
+                    response_serializer=user__pb2.GetAllUserResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -147,7 +163,7 @@ class UserService(object):
             target,
             '/user.UserService/GetUser',
             user__pb2.GetUserRequest.SerializeToString,
-            user__pb2.GetUserRequest.FromString,
+            user__pb2.GetUserResposne.FromString,
             options,
             channel_credentials,
             insecure,
@@ -175,6 +191,33 @@ class UserService(object):
             '/user.UserService/UpdateUser',
             user__pb2.UpdateUserRequest.SerializeToString,
             user__pb2.UpdateUserResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetAllUser(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/user.UserService/GetAllUser',
+            user__pb2.GetAllUserRequest.SerializeToString,
+            user__pb2.GetAllUserResponse.FromString,
             options,
             channel_credentials,
             insecure,

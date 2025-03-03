@@ -1,8 +1,14 @@
 import grpc
-# from user.user_pb2_grpc import UserServiceStub
+import os
+import sys
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(BASE_DIR)
+# import django
+# os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'system1.settings')
+# django.setup()
+
 from user import user_pb2_grpc
 from user import user_pb2
-# from user.user_pb2 import CreateUserRequest, GetUserRequest, UpdateUserRequest
 
 class UserClient:
     def __init__(self):
@@ -17,13 +23,30 @@ class UserClient:
             middle_name=middle_name,
             last_name=last_name
         )
-        response = self.stub.CreateUser(request)
-        return response
+        try:
+            response = self.stub.CreateUser(request)
+            return response
+        except grpc.RpcError as e:
+            print(f"Error creating user: {e.code().name} - {e.details()}")
+            return None
     
     def get_user(self, email):
         request = user_pb2.GetUserRequest(email=email)
-        response = self.stub.GetUser(request)
-        return response
+        try:
+            response = self.stub.GetUser(request)
+            return response
+        except grpc.RpcError as e:
+            print(f"Error fetching user: {e.code().name} - {e.details()}")
+            return None
+    
+    def get_all_users(self):
+        request = user_pb2.GetAllUserRequest()
+        try:
+            response = self.stub.GetAllUser(request)
+            return response
+        except grpc.RpcError as e:
+            print(f"Error fetching all user: {e.code().name} - {e.details()}")
+            return None
     
     def update_user(self, id, email, first_name, middle_name, last_name, is_staff, is_superuser):
         request = user_pb2.UpdateUserRequest(
@@ -35,8 +58,12 @@ class UserClient:
             is_staff=is_staff,
             is_superuser=is_superuser
         )
-        response = self.stub.UpdateUser(request)
-        return response
+        try:
+            response = self.stub.UpdateUser(request)
+            return response
+        except grpc.RpcError as e:
+            print(f"Error updating user: {e.code().name} - {e.details()}")
+            return None
     
 
 if __name__ == '__main__':
@@ -46,11 +73,12 @@ if __name__ == '__main__':
         email="saileshghimire@gmail.com",
         password="123456",
         first_name="Sailesh",
+        middle_name="Kumar",
         last_name="Ghimire",
-        is_staff=False,
-        is_superuser=False
     )
 
     print("All User:")
-    for user in client.get_user():
-        print(user)
+    response = client.get_all_users()
+    if response:
+        for user in response.users:
+            print(user)

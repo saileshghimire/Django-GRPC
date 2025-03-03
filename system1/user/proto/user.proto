@@ -62,10 +62,20 @@ message UpdateUserResponse {
     string message = 2;
     User user = 3;
 }
+// The request message for updating user details.
+message GetAllUserRequest {}
+
+// The response message for getting  all user
+message GetAllUserResponse{
+    repeated User users = 1;
+}
 
 // The service definition for user-related operations.
 service UserService {
     rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
-    rpc GetUser(GetUserRequest) returns (GetUserRequest);
+    rpc GetUser(GetUserRequest) returns (GetUserResposne);
     rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse);
+    rpc GetAllUser(GetAllUserRequest) returns (GetAllUserResponse);
 }
+
+// python -m grpc_tools.protoc --proto_path=user/proto --python_out=user --grpc_python_out=user user/proto/user.proto
