@@ -1,3 +1,9 @@
+
+
+networks:
+  grpc_network:
+    driver: bridge
+
 services:
   web:
     build:
@@ -7,11 +13,12 @@ services:
     # env_file:
     #   - ./system1/.env
     ports:
-      - "8000:8000"
+      - "8002:8000"
     depends_on:
       - db
+      # - kong
     environment:
-      - PORT=8000
+      - PORT=8002
     volumes:
       - ./system1:/app
       
@@ -27,6 +34,20 @@ services:
       POSTGRES_DB: grpc_user_DB
     ports:
       - "5432:5432"
+  
+  kong:
+    image: kong
+    container_name: kong-api-gateway
+    environment:
+      - KONG_DATABASE=off
+      - KONG_PROXY_LISTEN=0.0.0.0:8000
+      - KONG_ADMIN_LISTEN=0.0.0.0:8001
+    ports:
+      - "8000:8000"
+      - "8001:8001"
+    depends_on:
+      - web
+
 
 volumes:
   postgres_data:
